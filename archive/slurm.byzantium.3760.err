@@ -1,0 +1,52 @@
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/envs/registration.py:423: UserWarning: [33mWARN: Custom namespace `ALE` is being overridden by namespace `ALE`. If you are developing a plugin you shouldn't specify a namespace in `register` calls. The namespace is specified through the entry point package metadata.[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/torch/utils/tensorboard/__init__.py:4: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  if not hasattr(tensorboard, "__version__") or LooseVersion(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/envs/registration.py:423: UserWarning: [33mWARN: Custom namespace `ALE` is being overridden by namespace `ALE`. If you are developing a plugin you shouldn't specify a namespace in `register` calls. The namespace is specified through the entry point package metadata.[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/envs/registration.py:423: UserWarning: [33mWARN: Custom namespace `ALE` is being overridden by namespace `ALE`. If you are developing a plugin you shouldn't specify a namespace in `register` calls. The namespace is specified through the entry point package metadata.[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/envs/registration.py:423: UserWarning: [33mWARN: Custom namespace `ALE` is being overridden by namespace `ALE`. If you are developing a plugin you shouldn't specify a namespace in `register` calls. The namespace is specified through the entry point package metadata.[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/envs/registration.py:423: UserWarning: [33mWARN: Custom namespace `ALE` is being overridden by namespace `ALE`. If you are developing a plugin you shouldn't specify a namespace in `register` calls. The namespace is specified through the entry point package metadata.[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/torch/utils/tensorboard/__init__.py:4: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  if not hasattr(tensorboard, "__version__") or LooseVersion(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/torch/utils/tensorboard/__init__.py:4: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  if not hasattr(tensorboard, "__version__") or LooseVersion(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/torch/utils/tensorboard/__init__.py:4: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  if not hasattr(tensorboard, "__version__") or LooseVersion(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/torch/utils/tensorboard/__init__.py:4: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  if not hasattr(tensorboard, "__version__") or LooseVersion(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/utils/env_checker.py:144: UserWarning: [33mWARN: Agent's minimum observation space value is -infinity. This is probably too low.[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/utils/env_checker.py:144: UserWarning: [33mWARN: Agent's minimum observation space value is -infinity. This is probably too low.[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/utils/env_checker.py:148: UserWarning: [33mWARN: Agent's maxmimum observation space value is infinity. This is probably too high[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/utils/env_checker.py:148: UserWarning: [33mWARN: Agent's maxmimum observation space value is infinity. This is probably too high[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/core.py:200: DeprecationWarning: [33mWARN: Function `env.seed(seed)` is marked as deprecated and will be removed in the future. Please use `env.reset(seed=seed)` instead.[0m
+  deprecation(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/core.py:200: DeprecationWarning: [33mWARN: Function `env.seed(seed)` is marked as deprecated and will be removed in the future. Please use `env.reset(seed=seed)` instead.[0m
+  deprecation(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/utils/env_checker.py:144: UserWarning: [33mWARN: Agent's minimum observation space value is -infinity. This is probably too low.[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/utils/env_checker.py:148: UserWarning: [33mWARN: Agent's maxmimum observation space value is infinity. This is probably too high[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/core.py:200: DeprecationWarning: [33mWARN: Function `env.seed(seed)` is marked as deprecated and will be removed in the future. Please use `env.reset(seed=seed)` instead.[0m
+  deprecation(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/utils/env_checker.py:144: UserWarning: [33mWARN: Agent's minimum observation space value is -infinity. This is probably too low.[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/utils/env_checker.py:148: UserWarning: [33mWARN: Agent's maxmimum observation space value is infinity. This is probably too high[0m
+  logger.warn(
+/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/gym/core.py:200: DeprecationWarning: [33mWARN: Function `env.seed(seed)` is marked as deprecated and will be removed in the future. Please use `env.reset(seed=seed)` instead.[0m
+  deprecation(
+Traceback (most recent call last):
+  File "/home/u699081/FOLDER_thesis/MODELS/custom_reward_forward.py", line 186, in <module>
+    env = SubprocVecEnv([make_env(i) for i in range(4)])
+  File "/home/u699081/.conda/envs/thesis/lib/python3.10/site-packages/stable_baselines3/common/vec_env/subproc_vec_env.py", line 112, in __init__
+    observation_space, action_space = self.remotes[0].recv()
+  File "/home/u699081/.conda/envs/thesis/lib/python3.10/multiprocessing/connection.py", line 251, in recv
+    return _ForkingPickler.loads(buf.getbuffer())
+TypeError: RandomNumberGenerator._generator_ctor() takes from 0 to 1 positional arguments but 2 were given
