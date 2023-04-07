@@ -33,36 +33,29 @@ if __name__=="__main__":
 
     # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[1,0]])  #-> right
     # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[-1,0]])  #-> left
-    # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,1]])  #-> forward
+    env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,-1]])  #-> forward
     # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,-1]])  #-> backward
 
-    ## for task interpolation
-    env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[1,0]]) 
+    # # for task interpolation
+    # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0.7,0.7]]) 
 
     env = DummyVecEnv([lambda: env])
     env = VecMonitor(env)
 
-    # TODO: change VecNormalize path
-    env = VecNormalize.load("/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/student_right_2k/student_right_2k_env.pkl", env)
+    # TODO: change vecnormalize path
+    env = VecNormalize.load("/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/from_GPUs/ant_backward/ant_backward_vecnormalize.pkl", env)
 
     env.training = False
     env.norm_reward = False
 
-
-
-    policy_kwargs = dict(activation_fn=th.nn.Tanh, # Perhaps try ReLU
-                            features_extractor_class=CustomCombinedExtractor,
-                            features_extractor_kwargr_kwargs=dict(state_embedding_mlp=[256, 128], task_embedding_mlp=[16, 32], activation=th.nn.Tanh),
-                            net_arch=[dict(vf=[128], pi=[128])] )
-                         
 
     # TODO: change model path
 
     print("loading model")
     
     # # problem with student model from GPUs
-    PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/student_right_2k/student_right_2k_model.zip"
-
+    PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/from_GPUs/ant_backward/ant_backward_model.zip"
+    
     # # model trained loacally works
     # PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/student_right/student_model.ckpt"
     
