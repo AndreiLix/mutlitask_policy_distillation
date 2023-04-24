@@ -8,10 +8,11 @@ from stable_baselines3.common.utils import explained_variance
 from stable_baselines3 import PPO
 
 #from sb3_distill.core import PolicyDistillationAlgorithm
+from code_from_giacomo.mt_pd_LatestCode.core import PolicyDistillationAlgorithm
 
 
-#class ProximalPolicyDistillation(PPO, PolicyDistillationAlgorithm):
-class ProximalPolicyDistillation(PPO):
+class ProximalPolicyDistillation(PPO, PolicyDistillationAlgorithm):
+# class ProximalPolicyDistillation(PPO):
 
     def set_teachers(self, teacher_models:list, distill_lambda=1.0):
         """

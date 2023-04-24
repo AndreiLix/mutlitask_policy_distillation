@@ -4,13 +4,14 @@ from stable_baselines3.common.vec_env.vec_frame_stack import VecFrameStack
 from stable_baselines3.common.env_util import make_atari_env
 from stable_baselines3.common.evaluation import evaluate_policy
 
-from code_from_giacomo.multitask_distillation_UNTESTED.multitask_distillation.ppd import ProximalPolicyDistillation
 from WRAPPED_train import AntDirectionTaskWrapper, CustomCombinedExtractor
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecMonitor, VecNormalize
 import gym
 import torch as th
 from stable_baselines3.common.utils import set_random_seed
 
+from code_from_giacomo.multitask_distillation_UNTESTED.multitask_distillation.ppd import ProximalPolicyDistillation
+#from code_from_giacomo.mt_pd_LatestCode.ppd import ProximalPolicyDistillation
 
 
 if __name__ == "__main__":
@@ -54,13 +55,13 @@ if __name__ == "__main__":
                          net_arch=[dict(vf=[128], pi=[128])] )
 
     # TODO: fill in the model name
-    model_name = "student_multitask_4mil_big"
+    model_name = "student_multitask_6mil_big_LatestPpdCode24Apr2023"
 
     student_model = ProximalPolicyDistillation( "MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1, n_steps=1024, batch_size=256, n_epochs=5, gamma=0.99, tensorboard_log= f"/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/tensorboard_{model_name}/" )
 
     student_model.set_teachers( [teacher_model1, teacher_model2, teacher_model3, teacher_model4], distill_lambda=1)
 
-    student_model.learn(total_timesteps=4_000_000)
+    student_model.learn(total_timesteps=6_000_000)
 
     student_model.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/model_{model_name}.zip' )
     env.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/env_{model_name}.pkl' )

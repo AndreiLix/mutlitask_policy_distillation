@@ -31,9 +31,9 @@ if __name__=="__main__":
 
     #TODO: select the appropriate env
 
-    # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[1,0]])  #-> right
+    env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[1,0]])  #-> right
     # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[-1,0]])  #-> left
-    env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,-1]])  #-> forward
+    #env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,1]])  #-> forward
     # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,-1]])  #-> backward
 
     # # for task interpolation
@@ -43,7 +43,7 @@ if __name__=="__main__":
     env = VecMonitor(env)
 
     # TODO: change vecnormalize path
-    env = VecNormalize.load("/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/from_GPUs/ant_backward/ant_backward_vecnormalize.pkl", env)
+    env = VecNormalize.load("/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/student_multitask_6mil_big/env_student_multitask_6mil_big.pkl", env)
 
     env.training = False
     env.norm_reward = False
@@ -54,8 +54,8 @@ if __name__=="__main__":
     print("loading model")
     
     # # problem with student model from GPUs
-    PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/from_GPUs/ant_backward/ant_backward_model.zip"
-    
+    PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/student_multitask_6mil_big/model_student_multitask_6mil_big.zip"
+
     # # model trained loacally works
     # PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/student_right/student_model.ckpt"
     
@@ -86,6 +86,5 @@ if __name__=="__main__":
             print("DONE", dones)
         env.render()
     env.close()
-
 
 
