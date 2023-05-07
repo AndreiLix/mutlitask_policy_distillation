@@ -77,12 +77,24 @@ if __name__=="__main__":
 
     # # for visual inspection of performance
     
+
+    k = 0
     obs = env.reset()
     for i in range(10000):
 
         action, _states = model.predict(obs, deterministic=True)
         # action = env.action_space.sample()
         obs, rewards, dones, info = env.step(action)
+
+
+        # trying to figure out how many units on the x axis to initialize the radius as -> 10 units is appropriate
+        if info[0]['x_position'] >= 10:
+            break
+        if k == 0:
+            
+          print(info)
+
+        k = 1
 
         if np.any(dones):
 

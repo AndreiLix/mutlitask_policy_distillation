@@ -133,41 +133,70 @@ class ProximalPolicyDistillation(PolicyDistillationAlgorithm, PPO):
                     #print(self.num_timesteps, lambda_)
                 epoch_distillation_lambda = lambda_
 
-                if hasattr(self, 'teacher_model') and self.teacher_model is not None and lambda_>0.0:
-                    #print("ERROR: must first call model.set_teacher(teacher_model)")
-                    #return
 
-                    teacher_act_distribution = self.teacher_model.policy.get_distribution(rollout_data.observations)
+                # # OLD version of getting distillation loss
+                # if hasattr(self, 'teacher_model') and self.teacher_model is not None and lambda_>0.0:
+                #     #print("ERROR: must first call model.set_teacher(teacher_model)")
+                #     #return
+
+                #     teacher_act_distribution = self.teacher_model.policy.get_distribution(rollout_data.observations)
+                #     student_act_distribution = self.policy.get_distribution(rollout_data.observations)
+
+                #     # TODO: different papers do this differently;  in 'policy distillation' and DeepMind's football paper (when distilling individual policies), KL(teacher || student) is used; however, in that case the TEACHER policy is used to collect trajectories !
+                #     #       in DeepMind's football paper (learning final behavior, using mixture of skill-priors), they use KL(student || mixture-of-priors), and they use the STUDENT policy to collect trajectories
+
+                #     kl_divergence = distributions.kl_divergence(teacher_act_distribution, student_act_distribution) # trying to replicate the teacher; mean-seeking
+                #     #kl_divergence = distributions.kl_divergence(student_act_distribution, teacher_act_distribution) # trying to find the most probable action of the teacher; mode-seeking
+
+
+                #     if isinstance(teacher_act_distribution,
+                #                   (distributions.DiagGaussianDistribution,
+                #                    distributions.StateDependentNoiseDistribution)):
+                #         kl_divergence = distributions.sum_independent_dims(kl_divergence)
+
+                #     ### unclipped version:
+                #     #distillation_loss = th.mean(ratio * th.squeeze(kl_divergence))   # 'ratio' or 'th.clamp(ratio, 1 - clip_range, 1 + clip_range)'
+
+                #     # clipped version: note that both ratio (clipped or unclipped) and KL are always >=0; thus, contrary to the clip on the ratio*advantage, we do not have problems with changing signs.   max(r*kl, clip_r*kl) = max(r, clip(r, 1-e, 1+e))*kl = max(r, 1-e)*kl
+                #     #clipped_ratio = th.clamp(ratio, 1 - clip_range, 1 + clip_range)
+                #     clipped_ratio = th.clamp(ratio, 1-clip_range, None)
+                #     distillation_loss = th.mean(clipped_ratio * kl_divergence)   # 'ratio' or ''
+
+
+                #     ## remove
+                #     # clipped version: this is the most correct implementation, which prevents the policy from changing too much in between PPO iterations.
+                #     # Note that the clip term is now max instead of min, and without negative sign; that is because we are now minimizing a loss (maximizing -KL).
+                #     #distillation_loss_1 = th.squeeze(kl_divergence) * ratio
+                #     #distillation_loss_2 = th.squeeze(kl_divergence) * th.clamp(ratio, 1 - clip_range, 1 + clip_range)
+                #     #distillation_loss = th.max(distillation_loss_1, distillation_loss_2).mean()
+                #     ## end remove
+                # NEW version of getting loss
+
+                if hasattr(self, 'teacher_models') and self.teacher_models is not None and lambda_>0.0:
+                    teacher_act_distribution = []
+                    for t in self.teacher_models:
+                        teacher_act_distribution.append( t.policy.get_distribution(rollout_data.observations) )
                     student_act_distribution = self.policy.get_distribution(rollout_data.observations)
 
-                    # TODO: different papers do this differently;  in 'policy distillation' and DeepMind's football paper (when distilling individual policies), KL(teacher || student) is used; however, in that case the TEACHER policy is used to collect trajectories !
-                    #       in DeepMind's football paper (learning final behavior, using mixture of skill-priors), they use KL(student || mixture-of-priors), and they use the STUDENT policy to collect trajectories
-
-                    kl_divergence = distributions.kl_divergence(teacher_act_distribution, student_act_distribution) # trying to replicate the teacher; mean-seeking
-                    #kl_divergence = distributions.kl_divergence(student_act_distribution, teacher_act_distribution) # trying to find the most probable action of the teacher; mode-seeking
-
-
-                    if isinstance(teacher_act_distribution,
-                                  (distributions.DiagGaussianDistribution,
-                                   distributions.StateDependentNoiseDistribution)):
-                        kl_divergence = distributions.sum_independent_dims(kl_divergence)
-
-                    ### unclipped version:
-                    #distillation_loss = th.mean(ratio * th.squeeze(kl_divergence))   # 'ratio' or 'th.clamp(ratio, 1 - clip_range, 1 + clip_range)'
+                    ## Alternative 1: inspired by the bound in appendix B.6 of "From Motor Control to Team Play in Simulated Humanoid Football", we minimize only the smallest min_i kl_divergence(student || teacher_i), since that is an upper bound for the KL to the mixture of teachers.      WATCH OUT: I am not sure whether this may lead to overfitting to some teachers only!
 
                     # clipped version: note that both ratio (clipped or unclipped) and KL are always >=0; thus, contrary to the clip on the ratio*advantage, we do not have problems with changing signs.   max(r*kl, clip_r*kl) = max(r, clip(r, 1-e, 1+e))*kl = max(r, 1-e)*kl
                     #clipped_ratio = th.clamp(ratio, 1 - clip_range, 1 + clip_range)
                     clipped_ratio = th.clamp(ratio, 1-clip_range, None)
-                    distillation_loss = th.mean(clipped_ratio * kl_divergence)   # 'ratio' or ''
 
+                    kls = []
+                    for td in teacher_act_distribution:
+                        kl_i = distributions.kl_divergence(student_act_distribution, td)
+                        if isinstance(td,
+                                      (distributions.DiagGaussianDistribution,
+                                       distributions.StateDependentNoiseDistribution)):
+                            kl_i = distributions.sum_independent_dims(kl_i)
+                        kls.append(kl_i)
 
-                    ## remove
-                    # clipped version: this is the most correct implementation, which prevents the policy from changing too much in between PPO iterations.
-                    # Note that the clip term is now max instead of min, and without negative sign; that is because we are now minimizing a loss (maximizing -KL).
-                    #distillation_loss_1 = th.squeeze(kl_divergence) * ratio
-                    #distillation_loss_2 = th.squeeze(kl_divergence) * th.clamp(ratio, 1 - clip_range, 1 + clip_range)
-                    #distillation_loss = th.max(distillation_loss_1, distillation_loss_2).mean()
-                    ## end remove
+                    kls = th.stack(kls, -1)
+                    kls = th.min(kls, -1, keepdim=True)[0] # for each sample in the minibatch, only keep the minimum value
+                    distillation_loss = th.mean(kls)
+
 
                     loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss + lambda_ * distillation_loss
 
