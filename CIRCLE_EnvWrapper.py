@@ -24,9 +24,6 @@ The Circle has a radius of 10 and its center is at ( x, y ) = ( 10, y )
 
 class CircleTaskWrapper(gym.Wrapper):
 
-
-
-
     def __init__(
         self,
         env: gym.Env,
@@ -35,6 +32,8 @@ class CircleTaskWrapper(gym.Wrapper):
     ):
         
         super().__init__(env)
+        self.center = center
+        self.radius = radius
 
         # self.randomized_goal_directions = randomized_goal_directions
         # if self.randomized_goal_directions is not None:
@@ -138,24 +137,13 @@ class CircleTaskWrapper(gym.Wrapper):
         # return observation, reward, terminated, False, info
 
 
-    # def reset(self, **kwargs):
-    #     self.num_timesteps = 0
+    def reset(self, **kwargs):
+        self.num_timesteps = 0
 
-    #     # Sample a new goal
-    #     if self.randomized_goal_directions is None:
-    #         # Sample a goal at random
-    #         theta = np.random.random()*2*np.pi
-    #         self.current_goal = [np.cos(theta), np.sin(theta)]
-    #     else:
-    #         if len(self.randomized_goal_directions) == 1:
-    #             self.current_goal = self.randomized_goal_directions[0]
-    #         else:
-    #             self.current_goal = self.randomized_goal_directions[ np.random.randint(0, len(self.randomized_goal_directions)) ]
+        observation = self.env.reset(**kwargs)
 
-    #     observation = self.env.reset(**kwargs)
-
-    #     dict_obs = {"state": observation, "task":self.current_goal}
-    #     return dict_obs
+        dict_obs = {"state": observation}
+        return dict_obs
 
 
 

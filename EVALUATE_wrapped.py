@@ -16,8 +16,9 @@ from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
-from WRAPPED_train import AntDirectionTaskWrapper, CustomCombinedExtractor
+# from WRAPPED_train import AntDirectionTaskWrapper, CustomCombinedExtractor
 
+from CIRCLE_EnvWrapper import CircleTaskWrapper, CustomCombinedExtractor
 
 
 
@@ -31,7 +32,9 @@ if __name__=="__main__":
 
     #TODO: select the appropriate env
 
-    env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[1,0]])  #-> right
+    env = CircleTaskWrapper(env)
+
+    # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[1,0]])  #-> right
     # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[-1,0]])  #-> left
     # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,1]])  #-> forward
     # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,-1]])  #-> backward
@@ -42,8 +45,8 @@ if __name__=="__main__":
     env = DummyVecEnv([lambda: env])
     env = VecMonitor(env)
 
-    # TODO: change vecnormalize path
-    env = VecNormalize.load("/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/NewCode_StudentMultitask_10MilBig/env_NewCode_StudentMultitask_10MilBig.pkl", env)
+    # # TODO: change vecnormalize path (if trained without parallel envs, not required)
+    # env = VecNormalize.load("/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/NewCode_StudentMultitask_10MilBig/env_NewCode_StudentMultitask_10MilBig.pkl", env)
 
     env.training = False
     env.norm_reward = False
@@ -54,7 +57,7 @@ if __name__=="__main__":
     print("loading model")
     
     # # problem with student model from GPUs
-    PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/NewCode_StudentMultitask_10MilBig/model_NewCode_StudentMultitask_10MilBig.zip"
+    PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/FirstTry_circle_2mil/model_FirstTry_circle_2mil.zip"
 
     # # model trained loacally works
     # PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/student_right/student_model.ckpt"

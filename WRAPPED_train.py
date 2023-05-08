@@ -47,6 +47,7 @@ class AntDirectionTaskWrapper(gym.Wrapper):
         super().__init__(env)
 
         self.randomized_goal_directions = randomized_goal_directions
+        
         if self.randomized_goal_directions is not None:
             # Normalize directions
             for i in range(len(self.randomized_goal_directions)):

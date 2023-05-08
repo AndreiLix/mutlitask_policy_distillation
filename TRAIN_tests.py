@@ -37,13 +37,13 @@ if __name__ == "__main__":
         return _init
 
 
-    # these lines causes errors for circle
-    env = SubprocVecEnv([make_env(i) for i in range(4)])
-    env = VecMonitor(env)    
+    # # these lines causes errors for circle
+    # env = SubprocVecEnv([make_env(i) for i in range(4)])
+    # env = VecMonitor(env)    
 
-    # # testing:
-    # env = gym.make("Ant-v4")
-    # env = AntDirectionTaskWrapper(env, [[1,0]])
+    # testing:
+    env = gym.make("Ant-v4")
+    env = AntDirectionTaskWrapper(env, [[1,0]])
 
     # # Use these for circle
     # env = gym.make("Ant-v4")
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     # student_model.learn(total_timesteps=6_000_000)
 
     model.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/model_{model_name}.zip' )
-    env.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/env_{model_name}.pkl' )
+    #env.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/env_{model_name}.pkl' )
 
     mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
     print('Student reward: ', mean_reward, '+-', std_reward)
