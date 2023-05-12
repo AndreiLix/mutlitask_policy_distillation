@@ -81,7 +81,7 @@ if __name__ == "__main__":
     
 
     # TODO: fill in the model name
-    model_name = "FirstTry_circle_2mil"
+    model_name = "Cirlcle_rewardFromScratch_5mil"
 
 
     # TODO: uncomment the type of training desired
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     try:
         
-        model.learn(2e6)
+        model.learn(5e6)
 
         # for PD
         # student_model = ProximalPolicyDistillation( "MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1, n_steps=1024, batch_size=256, n_epochs=5, gamma=0.99, tensorboard_log= f"/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/tensorboard_{model_name}/" )

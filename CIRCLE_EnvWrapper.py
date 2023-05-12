@@ -24,6 +24,12 @@ The Circle has a radius of 10 and its center is at ( x, y ) = ( 10, y )
 
 class CircleTaskWrapper(gym.Wrapper):
 
+    """
+    Notes:
+    - everything related to coordinates needs to be defined as numpy arrays. this is for shorter code related to operations with positions.
+    
+    """
+
     def __init__(
         self,
         env: gym.Env,
@@ -32,7 +38,7 @@ class CircleTaskWrapper(gym.Wrapper):
     ):
         
         super().__init__(env)
-        self.center = center
+        self.center = np.array(center)
         self.radius = radius
 
         # self.randomized_goal_directions = randomized_goal_directions
@@ -77,24 +83,75 @@ class CircleTaskWrapper(gym.Wrapper):
         x_velocity, y_velocity = xy_velocity
 
 
-        def circular_velocity_difference(current_pos, prev_pos, center_pos, radius):
-            # Calculate the angle between the current position and the center of the circle
-            angle = math.atan2(current_pos[1] - center_pos[1], current_pos[0] - center_pos[0])
-            
-            # Calculate the expected velocity of the agent moving along the circumference of the circle
-            expected_velocity = [radius * math.cos(angle), radius * math.sin(angle)]
-            
-            # Calculate the actual velocity of the agent
-            actual_velocity = [(current_pos[0] - prev_pos[0]), (current_pos[1] - prev_pos[1])]
-            
-            # Calculate the difference between the actual and expected velocities
-            velocity_difference = [actual_velocity[0] - expected_velocity[0], actual_velocity[1] - expected_velocity[1]]
-            
-            magnitute_difference_vector = math.sqrt( velocity_difference[0] ** 2 + velocity_difference[1] ** 2 )
-
-            return magnitute_difference_vector
         
-        circle_reward = - circular_velocity_difference( xy_position_after, xy_position_before, self.center, self.radius )  
+
+        def get_proj( xy_position, center_circle, radius ):
+
+            """
+            Parameters:
+            ------------
+
+            xy_position: tupple-like shape (2,). The x, y coordinates of the Ant
+            center_circle: tupple-like (2,). The x, y coordinates of the circle
+
+            Returns:
+            --------
+            np array size (2,) with the x,y coordinates of the Ant's projection on the circle.
+            """
+
+            x, y = xy_position
+            x_circle, y_circle = center_circle
+            magnitude = math.sqrt( ( x - x_circle ) ** 2 + ( y - y_circle ) ** 2 )
+            projection = (xy_position - center_circle) / magnitude * radius + center_circle
+
+            return np.array(projection)
+        
+        def get_GoalPos( x, y, radius, center_circle, danger_zone= 0.95, dx= 1e-8):
+            
+            """
+            A function that returns the goal position of the Ant. 
+                The goal position is one step on the circle along the clockwise direction, starting from the Ant's projection on the circle.
+
+            Parameters:
+            -----------
+            x, y: coordinates of the projection of the Ant.
+            danger_zone: float between 0 and 1, default = 0.95.
+                This is a fast and dirty implementation, so I have to micromanage at parts. When the Ant dets close to the intersections of the circle and the x axis, 
+                    the y coordinate of goal_pos must change its sign.
+            dx: float, the increment added to the projection of the Ant on the x axis.    
+            
+            Returns:
+            --------
+            np array size (2,) = the x, y coordinates of the goal position
+
+            """
+
+            x_circle, y_circle = center_circle
+
+
+            math.atan2()
+
+
+            return np.array([x_GoalPos, y_GoalPos])
+   
+
+        xy_position_before = self.env.get_body_com("torso")[:2].copy()
+        self.env.do_simulation(action, self.env.frame_skip)
+        xy_position_after = self.env.get_body_com("torso")[:2].copy()
+
+        # xy_velocity = (xy_position_after - xy_position_before) / self.env.dt         # redundant
+        # x_velocity, y_velocity = xy_velocity
+
+        AntPosBefore = np.array(xy_position_before)
+        x_AntPos_after, y_AntPos_after = np.array(xy_position_after)
+
+        x_BeforeProj, y_BeforeProj = get_proj( AntPosBefore, center_circle= self.center, radius= self.radius )
+
+        x_GoalPos, y_GoalPos = get_GoalPos( x_BeforeProj, y_BeforeProj, radius= self.radius, center_circle= self.center, danger_zone= 0.95, dx= 1e-8 )
+        
+        distance_AntPosAfter_GoalPos = math.sqrt( ( x_AntPos_after - x_GoalPos) ** 2 +  (y_AntPos_after - y_GoalPos) ** 2 )
+
+        forward_reward = - distance_AntPosAfter_GoalPos
 
 
 
@@ -104,14 +161,14 @@ class CircleTaskWrapper(gym.Wrapper):
 
         healthy_reward = self.env.healthy_reward
 
-        rewards = circle_reward + healthy_reward
+        rewards = forward_reward + healthy_reward
         costs = ctrl_cost + contact_cost
 
         reward = rewards - costs
         terminated = self.env.terminated
         observation = self.env.get_obs()
         info = {
-            "circle_reward": circle_reward,
+            "circle_reward": forward_reward,
             "reward_ctrl": -ctrl_cost,
             "reward_contact": -contact_cost,
             "reward_survive": healthy_reward,

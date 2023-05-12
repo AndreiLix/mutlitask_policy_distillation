@@ -57,7 +57,7 @@ if __name__=="__main__":
     print("loading model")
     
     # # problem with student model from GPUs
-    PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/FirstTry_circle_2mil/model_FirstTry_circle_2mil.zip"
+    PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/RightWithCircleEnv_2mil/model_RightWithCircleEnv_2mil.zip"
 
     # # model trained loacally works
     # PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/student_right/student_model.ckpt"
