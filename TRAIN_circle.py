@@ -12,8 +12,8 @@ from stable_baselines3.common.utils import set_random_seed
 
 # from code_from_giacomo.multitask_distillation_UNTESTED.multitask_distillation.ppd import ProximalPolicyDistillation
 # from code_from_giacomo.mt_pd_LatestCode.ppd import ProximalPolicyDistillation
-from CIRCLE_EnvWrapper import CircleTaskWrapper, CustomCombinedExtractor
-
+# from CIRCLE_EnvWrapper import CircleTaskWrapper, CustomCombinedExtractor
+from GitHub_CircleWrapper import CircleTaskWrapper, CustomCombinedExtractor
 
 
 if __name__ == "__main__":
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     
 
     # TODO: fill in the model name
-    model_name = "Cirlcle_rewardFromScratch_5mil"
+    model_name = "github_CircleReward_10mil"
 
 
     # TODO: uncomment the type of training desired
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     try:
         
-        model.learn(5e6)
+        model.learn(10e6)
 
         # for PD
         # student_model = ProximalPolicyDistillation( "MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1, n_steps=1024, batch_size=256, n_epochs=5, gamma=0.99, tensorboard_log= f"/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/tensorboard_{model_name}/" )
@@ -106,7 +106,7 @@ if __name__ == "__main__":
         mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
         print('Student reward: ', mean_reward, '+-', std_reward)
 
-    except KeyboardInterrupt:
+    except KeyboardInterrupt:       # if early stopping of training is desired, the model is still saved
         
         model.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/model_{model_name}.zip' )
         #env.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/env_{model_name}.pkl' )

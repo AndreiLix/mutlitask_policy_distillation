@@ -18,8 +18,8 @@ from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
 # from WRAPPED_train import AntDirectionTaskWrapper, CustomCombinedExtractor
 
-from CIRCLE_EnvWrapper import CircleTaskWrapper, CustomCombinedExtractor
-
+# from CIRCLE_EnvWrapper import CircleTaskWrapper, CustomCombinedExtractor
+from GitHub_CircleWrapper import CircleTaskWrapper, CustomCombinedExtractor
 
 
 print(__name__)
@@ -57,7 +57,7 @@ if __name__=="__main__":
     print("loading model")
     
     # # problem with student model from GPUs
-    PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/RightWithCircleEnv_2mil/model_RightWithCircleEnv_2mil.zip"
+    PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/github_CircleReward_10mil/model_github_CircleReward_10mil.zip"
 
     # # model trained loacally works
     # PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/student_right/student_model.ckpt"
