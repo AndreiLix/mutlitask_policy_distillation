@@ -9,6 +9,9 @@ import gym
 import torch as th
 from stable_baselines3.common.utils import set_random_seed
 
+
+# TODO: select the approprate wrapper
+
 from WRAPPED_train import AntDirectionTaskWrapper, CustomCombinedExtractor
 # from code_from_giacomo.multitask_distillation_UNTESTED.multitask_distillation.ppd import ProximalPolicyDistillation
 from code_from_giacomo.mt_pd_LatestCode.ppd import ProximalPolicyDistillation
@@ -54,8 +57,8 @@ if __name__ == "__main__":
 
     # TODO: uncomment Normalization for desired env
 
-    # # for Cartesian direcitons
-    # env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=10., norm_obs_keys=["state"])
+    # for Cartesian direcitons
+    env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=10., norm_obs_keys=["state"])
     
     # for Circle
     # env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=10., norm_obs_keys=["state"])
@@ -88,26 +91,38 @@ if __name__ == "__main__":
     
 
     # TODO: fill in the model name
-    model_name = "testing1"
+    model_name = "ThirdRun_StandardMultitask_10mil"
 
 
     # TODO: uncomment the type of training desired
 
     # for REGULAR training
-    # model = PPO("MultiInputPolicy", env ,policy_kwargs=policy_kwargs, verbose=1, n_steps=1024, batch_size=256, n_epochs=5, gamma=0.99, tensorboard_log= f"/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/tensorboard_{model_name}/")
-    model = PPO("MultiInputPolicy", env, verbose=1, n_steps=1024, batch_size=256, n_epochs=5, gamma=0.99, tensorboard_log= f"/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/tensorboard_{model_name}/")
+    model = PPO("MultiInputPolicy", env ,policy_kwargs=policy_kwargs, verbose=1, n_steps=1024, batch_size=256, n_epochs=5, gamma=0.99, tensorboard_log= f"/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/tensorboard_{model_name}/")
+ 
+    # for CIRCLE?
+    # model = PPO("MultiInputPolicy", env, verbose=1, n_steps=1024, batch_size=256, n_epochs=5, gamma=0.99, tensorboard_log= f"/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/tensorboard_{model_name}/")
 
-    model.learn(1000)
+    # # for PD
+    # model = ProximalPolicyDistillation( "MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1, n_steps=1024, batch_size=256, n_epochs=5, gamma=0.99, tensorboard_log= f"/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/tensorboard_{model_name}/" )
+    # model.set_teacher( [teacher_model1, teacher_model2, teacher_model3, teacher_model4], distill_lambda=1)
 
-    # for PD
-    # student_model = ProximalPolicyDistillation( "MultiInputPolicy", env, policy_kwargs=policy_kwargs, verbose=1, n_steps=1024, batch_size=256, n_epochs=5, gamma=0.99, tensorboard_log= f"/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/tensorboard_{model_name}/" )
-    # student_model.set_teacher( [teacher_model1, teacher_model2, teacher_model3, teacher_model4], distill_lambda=1)
-    # student_model.learn(total_timesteps=6_000_000)
+    try:
+        
+        # TODO: choose training time
 
-    model.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/model_{model_name}.zip' )
-    env.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/env_{model_name}.pkl' )
+        model.learn(10e6)
 
-    mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
-    print('Student reward: ', mean_reward, '+-', std_reward)
+        model.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/model_{model_name}.zip' )
+        env.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/env_{model_name}.pkl' )
 
+        mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
+        print('Student reward: ', mean_reward, '+-', std_reward)
+
+    except KeyboardInterrupt:       # if early stopping of training is desired, the model is still saved
+        
+        model.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/model_{model_name}.zip' )
+        #env.save( f'/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/{model_name}/env_{model_name}.pkl' )
+
+        mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
+        print('Student reward: ', mean_reward, '+-', std_reward)
 

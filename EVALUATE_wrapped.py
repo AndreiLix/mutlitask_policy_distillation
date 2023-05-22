@@ -16,10 +16,12 @@ from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 
-# from WRAPPED_train import AntDirectionTaskWrapper, CustomCombinedExtractor
 
+# TODO: select appropriate wrapper
+
+from WRAPPED_train import AntDirectionTaskWrapper, CustomCombinedExtractor
 # from CIRCLE_EnvWrapper import CircleTaskWrapper, CustomCombinedExtractor
-from GitHub_CircleWrapper import CircleTaskWrapper, CustomCombinedExtractor
+# from GitHub_CircleWrapper import CircleTaskWrapper, CustomCombinedExtractor
 
 
 print(__name__)
@@ -32,13 +34,13 @@ if __name__=="__main__":
 
     #TODO: select the appropriate env
 
-    env = CircleTaskWrapper(env)
+    # env = CircleTaskWrapper(env)
 
-    # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[1,0]])  #-> right
-    # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[-1,0]])  #-> left
-    # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,1]])  #-> forward
-    # env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,-1]])  #-> backward
 
+    #env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,1]])  #-> forward
+    #env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[0,-1]])  #-> backward
+    env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[1,0]])  #-> right
+    #env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[-1,0]])  #-> left
     # # for task interpolation
     #env = AntDirectionTaskWrapper(env, randomized_goal_directions=[[1,1]]) 
 
@@ -46,7 +48,8 @@ if __name__=="__main__":
     env = VecMonitor(env)
 
     # # TODO: change vecnormalize path (if trained without parallel envs, not required)
-    # env = VecNormalize.load("/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/NewCode_StudentMultitask_10MilBig/env_NewCode_StudentMultitask_10MilBig.pkl", env)
+    
+    env = VecNormalize.load("/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/ThirdRun_StudentMultitask_6mil/env_ThirdRun_StudentMultitask_6mil.pkl", env)
 
     env.training = False
     env.norm_reward = False
@@ -57,7 +60,7 @@ if __name__=="__main__":
     print("loading model")
     
     # # problem with student model from GPUs
-    PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/github_CircleReward_10mil/model_github_CircleReward_10mil.zip"
+    PATH_model ="/home/andrei/Desktop/THESIS_multi_task_policy_distilation/WORKING_folder_thesis/checkpoints/local_trained/ThirdRun_StudentMultitask_6mil/model_ThirdRun_StudentMultitask_6mil.zip"
 
     # # model trained loacally works
     # PATH_model = "/home/andrei/Desktop/THESIS_multi_task_policy_distilation/student_right/student_model.ckpt"
@@ -65,8 +68,8 @@ if __name__=="__main__":
     model = PPO.load( PATH_model, env = env )
     print("model loaded")
 
-    mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
-    print(mean_reward, std_reward)
+    mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=30)
+    print("Mean reward: ", mean_reward, "Std reward: ", std_reward)
 
     # # failed attempts to save a video
 
