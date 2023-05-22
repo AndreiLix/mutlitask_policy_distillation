@@ -106,19 +106,21 @@ class CircleTaskWrapper(gym.Wrapper):
 
             return np.array(projection)
         
-        def get_GoalPos( x, y, radius, center_circle, danger_zone= 0.95, dx= 1e-8):
-            
+        def get_GoalPos( proj, radius, center_circle, angle_increment= 1):
+
             """
             A function that returns the goal position of the Ant. 
-                The goal position is one step on the circle along the clockwise direction, starting from the Ant's projection on the circle.
-
+                The goal position is computed by getting the angle between the lines (center_circle, ant_proj_line) and (center_circle, positive_XAxis),
+                    increasing the angle by angle_incremet, computing the sin and cos of the new angle, multiplying them by radius and adding center_circle.
+                        The resulting coordinates are those of goal_pos - a step along the circle in the counterclockwise direction
+        
             Parameters:
             -----------
-            x, y: coordinates of the projection of the Ant.
+            proj: np array size (2,): the x, y coordinates of the proj_lineection of the Ant.
             danger_zone: float between 0 and 1, default = 0.95.
                 This is a fast and dirty implementation, so I have to micromanage at parts. When the Ant dets close to the intersections of the circle and the x axis, 
                     the y coordinate of goal_pos must change its sign.
-            dx: float, the increment added to the projection of the Ant on the x axis.    
+            angle_incremet: float, the increment(degrees) added to the new angle used to compute goal_pos
             
             Returns:
             --------
@@ -126,14 +128,34 @@ class CircleTaskWrapper(gym.Wrapper):
 
             """
 
-            x_circle, y_circle = center_circle
 
+            import math
+            import numpy as np
 
-            math.atan2()
+            proj_line =  np.array([center_circle, proj ]).tolist()    # transforming np arrays to embedded lists, since np's array opperations perturb the algorithm
+            x_axis_line = np.array([ center_circle, [ center_circle[0] + radius, center_circle[1]] ] ).tolist()
 
+            try:
+                slope1 = (x_axis_line[1][1] - x_axis_line[0][1]) / (x_axis_line[1][0] - x_axis_line[0][0])
+            except ZeroDivisionError:
+                slope1 = (x_axis_line[1][1] - x_axis_line[0][1]) / 1e-8
 
-            return np.array([x_GoalPos, y_GoalPos])
-   
+            try:
+                slope2 = (proj_line[1][1] - proj_line[0][1]) / (proj_line[1][0] - proj_line[0][0])
+            except ZeroDivisionError:
+                slope2 = (proj_line[1][1] - proj_line[0][1]) / 1e-8
+
+            # Calculate the angle between the two lines
+            angle_rad = math.atan2(slope2 - slope1, 1 + slope1 * slope2)
+
+            new_angle_rad = math.radians( math.degrees(angle_rad) + angle_increment )
+
+            new_sin, new_cos = math.sin(new_angle_rad), math.cos(new_angle_rad)
+
+            goal_pos = np.array( [new_cos * radius + center_circle[0], new_sin * radius + center_circle[1] ]) 
+
+            return goal_pos
+        
 
         xy_position_before = self.env.get_body_com("torso")[:2].copy()
         self.env.do_simulation(action, self.env.frame_skip)
@@ -145,9 +167,9 @@ class CircleTaskWrapper(gym.Wrapper):
         AntPosBefore = np.array(xy_position_before)
         x_AntPos_after, y_AntPos_after = np.array(xy_position_after)
 
-        x_BeforeProj, y_BeforeProj = get_proj( AntPosBefore, center_circle= self.center, radius= self.radius )
+        proj = get_proj( AntPosBefore, center_circle= self.center, radius= self.radius )
 
-        x_GoalPos, y_GoalPos = get_GoalPos( x_BeforeProj, y_BeforeProj, radius= self.radius, center_circle= self.center, danger_zone= 0.95, dx= 1e-8 )
+        x_GoalPos, y_GoalPos = get_GoalPos( proj, radius= self.radius, center_circle= self.center, angle_increment=10 )
         
         distance_AntPosAfter_GoalPos = math.sqrt( ( x_AntPos_after - x_GoalPos) ** 2 +  (y_AntPos_after - y_GoalPos) ** 2 )
 

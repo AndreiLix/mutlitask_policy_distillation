@@ -12,8 +12,7 @@ from stable_baselines3.common.utils import set_random_seed
 
 # from code_from_giacomo.multitask_distillation_UNTESTED.multitask_distillation.ppd import ProximalPolicyDistillation
 # from code_from_giacomo.mt_pd_LatestCode.ppd import ProximalPolicyDistillation
-# from CIRCLE_EnvWrapper import CircleTaskWrapper, CustomCombinedExtractor
-from GitHub_CircleWrapper import CircleTaskWrapper, CustomCombinedExtractor
+from CIRCLE_EnvWrapper import CircleTaskWrapper, CustomCombinedExtractor
 
 
 if __name__ == "__main__":
@@ -81,7 +80,7 @@ if __name__ == "__main__":
     
 
     # TODO: fill in the model name
-    model_name = "github_CircleReward_10mil"
+    model_name = "CircleReward22May2023_10mil"
 
 
     # TODO: uncomment the type of training desired
