@@ -1,14 +1,12 @@
+# Addressing Task Interference through Multitask Policy Distillation
+
+This thesis project compared the stability of standard multitask learning techniques with a novel algorithm for multitask policy distillation (MTPD). The results show that MTPD achieves greater stability across learning, with a lower sensitivity to initializations.
+
+
+![image](https://github.com/AndreiLix/mutlitask_policy_distillation/assets/94043928/b88bdad9-dfef-4410-a252-86eb5235ecf6)
 
 
 
-small or no size mentioned: 
-    policy_kwargs =dict(activation_fn=th.nn.Tanh, # Perhaps try ReLU
-                         features_extractor_class=CustomCombinedExtractor,
-                         features_extractor_kwargs=dict(state_embedding_mlp=[128, 128], task_embedding_mlp=[16, 32], activation=th.nn.Tanh),
-                         net_arch=[dict(vf=[64, 64], pi=[64, 64])] )
+Below lies the thesis poster, containing the goals at th einception of the project;
 
-big: 
-    policy_kwargs = dict(activation_fn=th.nn.Tanh, # Perhaps try ReLU
-                            features_extractor_class=CustomCombinedExtractor,
-                            features_extractor_kwargr_kwargs=dict(state_embedding_mlp=[256, 128], task_embedding_mlp=[16, 32], activation=th.nn.Tanh),
-                            net_arch=[dict(vf=[128], pi=[128])] )
+![Thesis poster final_page-0001 (1)](https://github.com/AndreiLix/mutlitask_policy_distillation/assets/94043928/b1d0549a-9c6e-4f3a-b092-fae0f63f06de)
